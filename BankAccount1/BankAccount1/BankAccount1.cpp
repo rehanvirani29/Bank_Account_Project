@@ -1,19 +1,73 @@
 
-
 #include <iostream>
+#include <fstream>
 
-int main()
+using std::cout;
+using std::cin;
+using std::ofstream;
+using std::ios;
+
+class account_query
 {
-    std::cout << "Hello World!\n";
+private:
+    char account_number[20];
+    char firstName[10];
+    char lastName[10];
+    float total_Balance;
+public:
+    void read_data();
+    void write_rec();
+};
+
+
+void account_query::read_data()
+{
+    cout << "\nEnter Account Number: ";
+    cin >> account_number;
+    cout << "Enter First Name: ";
+    cin >> firstName;
+    cout << "Enter Last Name: ";
+    cin >> lastName;
+    cout << "Enter Balance: ";
+    cin >> total_Balance;
+    cout << "\n";
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+void account_query::write_rec()
+{
+    ofstream outfile;
+    outfile.open("record.bank", ios::binary | ios::app);
+    read_data();
+    outfile.write(reinterpret_cast<char*>(this), sizeof(*this));
+    outfile.close();
+}
+int main()
+{
+    account_query A;
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+    int choice;
+    cout << "Welcome to the Bank of Virani!\n";
+
+    while (true)
+    {
+        cout << "Please select one of the options below.\n";
+        cout << "1-->Add record to file\n";
+        cout << "2-->Quit\n";
+        cout << "Enter your choice: \n";
+
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            A.write_rec();
+            break;
+        case 2:
+            exit(0);
+            break;
+        }
+    }
+}
+
+
+

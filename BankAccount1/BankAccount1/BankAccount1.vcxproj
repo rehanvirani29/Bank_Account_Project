@@ -129,6 +129,9 @@
   <ItemGroup>
     <ClCompile Include="BankAccount1.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="record.bank" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
