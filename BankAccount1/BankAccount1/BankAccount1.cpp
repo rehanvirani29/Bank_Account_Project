@@ -2,8 +2,11 @@
 #include <iostream>
 #include <fstream>
 
+using std::endl;
 using std::cout;
 using std::cin;
+using std::fstream;
+using std::ifstream;
 using std::ofstream;
 using std::ios;
 
@@ -17,8 +20,88 @@ private:
 public:
     void read_data();
     void write_rec();
+    void search_rec();
+    void show_data();
+    void read_rec();
+    void edit_rec();
 };
 
+
+void account_query::read_rec()
+{
+    ifstream infile;
+    infile.open("record.bank", ios::binary);
+    if (!infile)
+    {
+        cout << "Error in Opening! File Not Found!!" << endl;
+        return;
+    }
+    cout << "\n****Data from file****" << endl;
+    while (!infile.eof())
+    {
+        if (infile.read(reinterpret_cast<char*>(this), sizeof(*this)))
+        {
+            show_data();
+        }
+    }
+    infile.close();
+}
+
+void account_query::show_data()
+{
+    cout << "Account Number: " << account_number << endl;
+    cout << "First Name: " << firstName << endl;
+    cout << "Last Name: " << lastName << endl;
+    cout << "Current Balance: Rs.  " << total_Balance << endl;
+    cout << "-------------------------------" << endl;
+}
+
+void account_query::edit_rec()
+{
+    int n;
+    fstream iofile;
+    iofile.open("record.bank", ios::in | ios::binary);
+    if (!iofile)
+    {
+        cout << "\nError in opening! File Not Found!!" << endl;
+        return;
+    }
+    iofile.seekg(0, ios::end);
+    int count = iofile.tellg() / sizeof(*this);
+    cout << "\n There are " << count << " record in the file";
+    cout << "\n Enter Record Number to edit: ";
+    cin >> n;
+    iofile.seekg((n - 1) * sizeof(*this));
+    iofile.read(reinterpret_cast<char*>(this), sizeof(*this));
+    cout << "Record " << n << " has following data" << endl;
+    show_data();
+    iofile.close();
+    iofile.open("record.bank", ios::out | ios::in | ios::binary);
+    iofile.seekp((n - 1) * sizeof(*this));
+    cout << "\nEnter data to Modify " << endl;
+    read_data();
+    iofile.write(reinterpret_cast<char*>(this), sizeof(*this));
+}
+
+void account_query::search_rec()
+{
+    int n;
+    ifstream infile;
+    infile.open("record.bank", ios::binary);
+    if (!infile)
+    {
+        cout << "\nError in opening! File Not Found!!" << endl;
+        return;
+    }
+    infile.seekg(0, ios::end);
+    int count = infile.tellg() / sizeof(*this);
+    cout << "\n There are " << count << " record in the file";
+    cout << "\n Enter Record Number to Search: ";
+    cin >> n;
+    infile.seekg((n - 1) * sizeof(*this));
+    infile.read(reinterpret_cast<char*>(this), sizeof(*this));
+    show_data();
+}
 
 void account_query::read_data()
 {
@@ -52,7 +135,11 @@ int main()
     {
         cout << "Please select one of the options below.\n";
         cout << "1-->Add record to file\n";
-        cout << "2-->Quit\n";
+        cout << "2-->Show record from file\n";
+        cout << "3-->Search Record from file\n";
+        cout << "4-->Update Record\n";
+        cout << "5-->Quit\n";
+
         cout << "Enter your choice: \n";
 
         cin >> choice;
@@ -63,8 +150,18 @@ int main()
             A.write_rec();
             break;
         case 2:
+            A.read_rec();
+            break;
+        case 3:
+            A.search_rec();
+            break;
+        case 4:
+            A.edit_rec();
+            break;
+        case 5:
             exit(0);
             break;
+
         }
     }
 }
