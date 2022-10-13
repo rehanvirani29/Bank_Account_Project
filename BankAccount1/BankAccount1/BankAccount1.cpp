@@ -24,6 +24,8 @@ public:
     void show_data();
     void read_rec();
     void edit_rec();
+    void delete_rec();
+
 };
 
 
@@ -124,6 +126,38 @@ void account_query::write_rec()
     outfile.write(reinterpret_cast<char*>(this), sizeof(*this));
     outfile.close();
 }
+
+void account_query::delete_rec()
+{
+    int n;
+    ifstream infile;
+    infile.open("record.bank", ios::binary);
+    if (!infile)
+    {
+        cout << "\nError in opening! File Not Found!!" << endl;
+        return;
+    }
+    infile.seekg(0, ios::end);
+    int count = infile.tellg() / sizeof(*this);
+    cout << "\n There are " << count << " record in the file";
+    cout << "\n Enter Record Number to Delete: ";
+    cin >> n;
+    fstream tmpfile;
+    tmpfile.open("tmpfile.bank", ios::out | ios::binary);
+    infile.seekg(0);
+    for (int i = 0; i < count; i++)
+    {
+        infile.read(reinterpret_cast<char*>(this), sizeof(*this));
+        if (i == (n - 1))
+            continue;
+        tmpfile.write(reinterpret_cast<char*>(this), sizeof(*this));
+    }
+    infile.close();
+    tmpfile.close();
+    remove("record.bank");
+    rename("tmpfile.bank", "record.bank");
+}
+
 int main()
 {
     account_query A;
@@ -138,7 +172,8 @@ int main()
         cout << "2-->Show record from file\n";
         cout << "3-->Search Record from file\n";
         cout << "4-->Update Record\n";
-        cout << "5-->Quit\n";
+        cout << "5-->Delete Record\n";
+        cout << "6-->Quit\n";
 
         cout << "Enter your choice: \n";
 
@@ -159,6 +194,9 @@ int main()
             A.edit_rec();
             break;
         case 5:
+            A.delete_rec();
+            break;
+        case 6:
             exit(0);
             break;
 
