@@ -10,6 +10,7 @@ using std::ios;
 using std::endl;
 using std::ofstream;
 using std::ifstream;
+using std::fstream;
 
 
 class account_options {
@@ -19,9 +20,10 @@ private:
 public:
 	int record_number;
 
+
 	void new_account();
 	void view_accounts();
-	void exit();
+	void del_record();
 
 };
 
@@ -65,9 +67,68 @@ void account_options::view_accounts()
 }
 
 
-void account_options::exit()
+void account_options::del_record()
 {
+	int delete_line;
+	int current_line;
+	string first_char;
+	int first_char_toint;
+	cout << "Enter the record number you want to delete: ";
+	cin >> delete_line;
 
+	string temp;
+	ifstream inFile;
+	ofstream MRD;
+	ofstream MRK;
+	inFile.open("Master_Record.txt");
+	MRD.open("Master_Record_Delete.txt",ios::app);
+	MRK.open("Master_Record_Keep.txt", ios::app);
+
+	getline(inFile, temp);
+	first_char = temp.substr(0, 1);
+	first_char_toint = stoi(first_char);
+	if (first_char_toint == delete_line) { //content to be deleted so not moved to new file
+		MRD << temp << endl;
+	}
+	else {
+		MRK << temp << endl;
+	}
+
+
+
+
+
+	/*
+	int n;
+	cout << "Enter the record number you want to delete: ";
+	cin >> n;
+
+	ifstream delete_files("Master_Record.txt");
+
+	ofstream fout;
+	fout.open("Master_Record_Temp.txt", ios::out);
+
+	char ch;
+	int line = 1;
+	while (delete_files.get(ch))
+	{
+		if (ch == '\n')
+			line++;
+
+		if (line != n)      // content not to be deleted 
+			fout << ch;
+
+
+	}
+
+	remove("Master_Record.txt");
+	rename("Master_Record_Temp.txt", "Master_Record.txt");
+
+	delete_files.open("Master_Record.txt", ios::in);
+	string get_line;
+	getline(delete_files, get_line);
+
+	*/
 
 }
 
@@ -81,8 +142,9 @@ int main()
 
 		cout << "Welcome to the record sysem. There are may differnt ";
 		cout << "actions that can be done. Please select one of the following" << endl;
-		cout << "1: Create new account" << endl;
-		cout << "2: View Accounts" << endl;
+		cout << "1: Create new account." << endl;
+		cout << "2: View Accounts." << endl;
+		cout << "4: Delete a record." << endl;
 		cout << "5: Exit System" << endl;
 		cin >> option;
 
@@ -97,10 +159,9 @@ int main()
 
 			break;
 		case 4:
-
+			A.del_record();
 			break;
 		case 5:
-			A.exit();
 			exit(0);
 			loop = false;
 			break;
